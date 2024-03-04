@@ -1,30 +1,68 @@
-'use client'
+/* eslints-disable react-hooks/exhaustive-deps */
+/* eslints-disable no-nested-ternary */
 
-import axios from 'axios';
-import React, { useCallback } from 'react';
-import { Button, Box } from '@mui/material';
-import styles from './index.module.scss';
+'use client';
 
+import React, { useCallback, useState, useEffect } from 'react';
+import { Button, Box, CircularProgress } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import AdsList from './components/AdsList';
 
-const Index = () => {
-  const fetchAds = useCallback(() => {
-    const fetchData = async () => {
-      const { data } = await axios.get('/api/ads?minPrice=1000000');
-      console.log(data);
+const fetchAds = async (query, setLoading, setAds) => {
+  try {
+    setLoading(true);
+    const response = await fetch(`/api/ads?${query}`);
+    const adsData = await response.json();
+    if (adsData.results) {
+      setAds(adsData.results);
+    } else {
+      throw Error(adsData);
     }
-    fetchData();
+  } catch (err) {
+    setAds([]);
+    toast.error(`Error fetching ads. Please try again later.`);
+  } finally {
+    setLoading(false);
+  }
+};
+const Page = () => {
+  const [ads, setAds] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({});
+
+  useEffect(() => {
+    fetchAds('minPrice=10000', setLoading, setAds);
   }, []);
 
   return (
-    <div className={styles.container}>
+    <div>
       <Box alignContent="center">
-        <h1>And here it starts...</h1>
-        <Button onClick={fetchAds} variant='outlined'>
+        <Button onClick={fetchAds} variant="outlined">
           Send an API request
         </Button>
+        {loading ? (
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+              height: '100vh',
+            }}
+          >
+            <Grid>
+              <CircularProgress />
+            </Grid>
+          </Grid>
+        ) : (
+          <AdsList ads={ads} />
+        )}
       </Box>
+      <ToastContainer />
     </div>
   );
-}
+};
 
-export default Index;
+export default Page;
