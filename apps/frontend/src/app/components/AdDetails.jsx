@@ -1,19 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as React from 'react';
 import { Box, Grid, IconButton, Typography } from '@mui/material';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 import { useState } from 'react';
-import ImageCarouselNavigateButton from './ImageCarouselNavigationButton';
+import ImageCarousel from './ImageCarousel';
 
 const AdDetails = ({ ad }) => {
-  const [imageCount, setImageCount] = useState(0);
-  const numberOfImages = ad.images.length;
-
   const [isFavorite, setIsFavorite] = useState(false);
 
   React.useEffect(() => {
@@ -52,38 +46,7 @@ const AdDetails = ({ ad }) => {
             maxWidth: '100%',
           }}
         >
-          <Grid sx={{ position: 'relative' }}>
-            {imageCount + 1 < numberOfImages ? (
-              <ImageCarouselNavigateButton
-                direction="forward"
-                onClick={() => {
-                  imageCount + 1 < numberOfImages
-                    ? setImageCount(imageCount + 1)
-                    : setImageCount(imageCount);
-                }}
-              />
-            ) : null}
-            {imageCount !== 0 ? (
-              <ImageCarouselNavigateButton
-                direction="backward"
-                onClick={() => {
-                  imageCount > 0
-                    ? setImageCount(imageCount - 1)
-                    : setImageCount(imageCount);
-                }}
-              />
-            ) : null}
-
-            <CardMedia
-              component="img"
-              image={ad.images[imageCount].image}
-              sx={{
-                height: '30vh',
-                boxSizing: 'border-box',
-              }}
-              alt={ad.title}
-            />
-          </Grid>
+          <ImageCarousel ad={ad} />
         </Card>
       </Grid>
       <Grid>
@@ -119,7 +82,7 @@ const AdDetails = ({ ad }) => {
           <Typography variant="body1" component="div">
             {ad.city_name}
           </Typography>
-          <Typography variant="body1" component="div">
+          <Typography sx={{ ml: '20px' }} variant="body1" component="div">
             {ad.price || '0.00'}
           </Typography>
         </Box>

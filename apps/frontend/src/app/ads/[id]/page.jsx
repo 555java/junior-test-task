@@ -1,12 +1,10 @@
-/* eslint-disable no-nested-ternary */
-
 'use client';
 
-import React, { useState, useEffect, Fragment, useCallback } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import Grid from '@mui/material/Unstable_Grid2';
-import { Alert, CircularProgress } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+
+import { Alert } from '@mui/material';
 import AdDetails from '../../components/AdDetails';
+import Loader from '../../components/Loader';
 
 const fetchAd = async (id, setLoading, setAd) => {
   try {
@@ -28,36 +26,18 @@ const fetchAd = async (id, setLoading, setAd) => {
 const Page = ({ params }) => {
   const [ad, setAd] = useState(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     fetchAd(params.id, setLoading, setAd);
   }, [params.id]);
-  return (
-    <>
-      {loading ? (
-        <Grid
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          sx={{
-            height: '100vh',
-          }}
-        >
-          <Grid>
-            <CircularProgress />
-          </Grid>
-        </Grid>
-      ) : ad === null ? (
-        <Alert severity="error">
-          Something went wrong with loading the ad.
-        </Alert>
-      ) : (
-        <AdDetails ad={ad} />
-      )}
-      <ToastContainer />
-    </>
-  );
+  if (loading) {
+    return <Loader />;
+  }
+  if (!ad) {
+    return (
+      <Alert severity="error">Something went wrong with loading the ad.</Alert>
+    );
+  }
+  return <AdDetails ad={ad} />;
 };
 
 export default Page;

@@ -19,7 +19,8 @@ const AdsCard = ({ ad }) => {
     setIsFavorite(favoriteAds.some((favAd) => favAd.id === ad.id));
   }, [ad.id]);
 
-  const handleFavoriteClick = () => {
+  const handleFavoriteClick = (event) => {
+    event.preventDefault();
     let favoriteAds = JSON.parse(localStorage.getItem('favoriteAds')) || [];
     if (!isFavorite) {
       favoriteAds.push(ad);
